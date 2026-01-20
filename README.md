@@ -87,4 +87,4 @@ Sprites:
 
 Equivalent:
 
-![Test Sprites](./assets/test_sprites.png)
+<img src="./assets/test_sprites.png" width=20/>
