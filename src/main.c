@@ -55,7 +55,7 @@ int main(int argc, char* argv[]) {
     }
 
     const char* input_file = argv[1];
-    const char* output_file = "output.png";
+    const char* output_file = "output.ppm";
 
     // open input file
     FILE* f = fopen(input_file, "rb");

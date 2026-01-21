@@ -18,6 +18,47 @@
 | Palette | 4-color DMG |
 | Output Format | PNG |
 
+## Usage
+
+### Compilation
+
+```bash
+make
+# or
+gcc -o GBR2PNG src/main.c
+```
+
+### Running
+
+```bash
+./build/GBR2PNG
+```
+
+The program will automatically:
+
+1. Read the `.GBR` file
+2. Extract tile data starting at offset `0xB4`
+3. Process tiles until 3 consecutive empty tiles are found
+4. Output the result as `output.ppm`
+
+### Converting to PNG
+
+If you need a **PNG** file, convert the **PPM** output using **ImageMagick**:
+
+MacOS:
+
+```bash
+brew install imagemagick
+```
+
+And run:
+
+```bash
+convert output.ppm output.png
+```
+
+Or use any image viewer that supports PPM format.
+
 ### Example of a `.GBR` file
 
 #### Header
@@ -85,6 +126,26 @@ Sprites:
 03 00 03 00 03 00 00 03  00 03 00 03 00
 ```
 
-Equivalent:
+**Equivalent visual output:**
 
 <img src="./assets/test_sprites.png" width=20/>
+
+## How It Works
+
+1. **File Reading**: Opens the `.GBR` file and reads it into memory
+2. **Tile Detection**: Scans from offset `0xB4` to find valid tile data
+3. **Empty Tile Detection**: Monitors for 3 consecutive empty tiles (all bytes = 0) to determine where tile data ends
+4. **Image Generation**: Converts each 8x8 tile into RGB pixels using the DMG palette
+5. **Output**: Writes a PPM (P6 format) image file
+
+## Technical Details
+
+- **Tile Layout**: Each tile is 8x8 pixels (64 bytes total)
+- **Tiles Per Row**: Configurable via `TILES_PER_ROW` constant (default: 1)
+- **Color Depth**: 2-bit color (4 colors)
+- **Output Format**: PPM P6 (binary RGB)
+
+## Requirements
+
+- C compiler (GCC, Clang, MSVC, etc.)
+- Standard C library
