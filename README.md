@@ -6,8 +6,8 @@
 
 - Automatically identifies the number of tiles by scanning for tile data starting at offset `0xB4`
 - Stops processing after finding a sequence of **3 empty tiles** to avoid exporting unnecessary tiles
-- Written in standard C with no external library requirements.
-- Renders images using the original Gameboy green-scale colors.
+- Written in standard C with no external library requirements
+- Renders images using the original Gameboy DMG green-scale colors
 
 ## Conversion Process
 
@@ -15,8 +15,18 @@
 | ----------- | --------------- |
 | Tile Size | `8x8` Pixels |
 | Data Offset | `0xB4` (Standard .GBR header length) |
+| Bytes per Tile | 64 bytes |
 | Palette | 4-color DMG |
-| Output Format | PNG |
+| Output Format | PPM (convertible to PNG) |
+
+### DMG Color Palette
+
+The tool uses the classic Gameboy DMG palette:
+
+- **Color 0** (Lightest): RGB(155, 188, 15)
+- **Color 1** (Light): RGB(139, 172, 15)
+- **Color 2** (Dark): RGB(48, 98, 48)
+- **Color 3** (Darkest): RGB(15, 56, 15)
 
 ## Usage
 
@@ -31,7 +41,7 @@ gcc -o GBR2PNG src/main.c
 ### Running
 
 ```bash
-./build/GBR2PNG
+./build/GBR2PNG <input_file.gbr>
 ```
 
 The program will automatically:
@@ -45,23 +55,32 @@ The program will automatically:
 
 If you need a **PNG** file, convert the **PPM** output using **ImageMagick**:
 
-MacOS:
+**macOS:**
 
 ```bash
 brew install imagemagick
+convert output.ppm output.png
 ```
 
-And run:
+**Linux (Debian/Ubuntu):**
 
 ```bash
+sudo apt-get install imagemagick
 convert output.ppm output.png
+```
+
+**Windows:**
+Download ImageMagick from [imagemagick.org](https://imagemagick.org/script/download.php), then:
+
+```bash
+magick convert output.ppm output.png
 ```
 
 Or use any image viewer that supports PPM format.
 
-### Example of a `.GBR` file
+## Example of a `.GBR` file
 
-#### Header
+### Header
 
 Info:
 
@@ -91,35 +110,31 @@ Info:
 08 00 08 00 80 00          ......
 ```
 
-Palettes:
+### Palettes
 
 ```hex
 00 01 02 03  White  Light-Grey  Grey  Black
 ```
 
-Sprites:
+### Sprites (Tile Data starting at 0xB4)
 
 ```hex
 03 03 03 03 03 03 03 03  03 03 03 03 03 03 03 03
 03 03 03 03 03 03 03 03  03 03 03 03 03 03 03 03
 03 03 03 03 03 03 03 03  03 03 03 03 03 03 03 03
 03 03 03 03 03 03 03 03  03 03 03 03 03 03 03 03
-
 02 02 02 02 02 02 02 02  02 02 02 02 02 02 02 02
 02 02 02 02 02 02 02 02  02 02 02 02 02 02 02 02
 02 02 02 02 02 02 02 02  02 02 02 02 02 02 02 02
 02 02 02 02 02 02 02 02  02 02 02 02 02 02 02 02
-
 01 01 01 01 01 01 01 01  01 01 01 01 01 01 01 01
 01 01 01 01 01 01 01 01  01 01 01 01 01 01 01 01
 01 01 01 01 01 01 01 01  01 01 01 01 01 01 01 01
 01 01 01 01 01 01 01 01  01 01 01 01 01 01 01 01
-
 00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00
 00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00
 00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00
 00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00
-
 03 00 03 00 03 00 03 00  03 00 00 03 00 03 00 03
 00 03 30 00 03 00 03 00  03 00 00 03 00 03 00 03
 30 00 03 00 03 00 03 00  00 03 00 03 00 03 30 00
@@ -144,8 +159,20 @@ Sprites:
 - **Tiles Per Row**: Configurable via `TILES_PER_ROW` constant (default: 1)
 - **Color Depth**: 2-bit color (4 colors)
 - **Output Format**: PPM P6 (binary RGB)
+- **Empty Tile Threshold**: 3 consecutive empty tiles
 
 ## Requirements
 
 - C compiler (GCC, Clang, MSVC, etc.)
 - Standard C library
+- (Optional) ImageMagick for PPM to PNG conversion
+
+## Boring stuff
+
+### About .GBR Files
+
+`.GBR` files are created by [Gameboy Tile Designer](https://www.devrs.com/gb/hmgd/gbtd.html), a tool for creating tile-based graphics for Gameboy games. The format stores tile data with a header followed by pixel data for each 8x8 tile.
+
+### License
+
+[Unlicense](./UNLICENSE)
