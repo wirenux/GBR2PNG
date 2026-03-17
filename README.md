@@ -175,4 +175,4 @@ Info:
 
 ### License
 
-[Unlicense](./UNLICENSE)
+[MIT](./LICENSE)
